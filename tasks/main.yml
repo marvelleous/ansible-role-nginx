@@ -1,0 +1,84 @@
+---
+# tasks file for nginx
+
+- import_tasks: debian-dependencies.yml
+  when: ansible_os_family == 'Debian'
+
+- import_tasks: centos-dependencies.yml
+  when: ansible_os_family == 'Redhat'
+
+- name: Download Nginx
+  get_url:
+      url: https://nginx.org/download/nginx-{{ nginx_version }}.tar.gz
+      dest: '{{ download_path }}/nginx.tar.gz'
+
+- name: Download PCRE
+  get_url:
+      url: https://ftp.pcre.org/pub/pcre/pcre-{{ pcre_version }}.tar.gz
+      dest: '{{ download_path}}/pcre.tar.gz '
+
+- name: Download Zlib
+  get_url:
+      url: http://www.zlib.net/zlib-{{ zlib_version }}.tar.gz
+      dest: '{{ download_path}}/zlib.tar.gz'
+
+- name: Download OpenSSL
+  get_url:
+      url: https://www.openssl.org/source/openssl-{{ openssl_version }}.tar.gz
+      dest: '{{download_path}}/openssl.tar.gz'
+
+- name: Unarchive Nginx
+  unarchive:
+      src: '{{ download_path }}/nginx.tar.gz'
+      dest: '{{ download_path}}'
+
+- name: Unarchive PCRE
+  unarchive:
+      src: '{{ download_path }}/pcre.tar.gz'
+      dest: '{{ download_path}}'
+
+- name: Unarchive Zlib
+  unarchive:
+      src: '{{ download_path }}/zlib.tar.gz'
+      dest: '{{ download_path}}'
+
+- name: Unarchive openssl
+  unarchive:
+      src: '{{ download_path }}/openssl.tar.gz'
+      dest: '{{ download_path}}'
+
+- name: Cloning More Header Nginx module.
+  git:
+     repo: https://github.com/openresty/headers-more-nginx-module.git
+     dest: '{{ download_path }}/headers-more-nginx-module'
+
+- import_tasks: debian-configure.yml
+  when: ansible_os_family == 'Debian'
+
+- import_tasks: centos-configure.yml
+  when: ansible_os_family == 'Redhat'
+
+- name: Build Nginx - (make)
+  make:
+     chdir: '{{ download_path}}/nginx-{{ nginx_version }}'
+
+- name: Install nginx - (make install)
+  make: 
+    chdir: '{{ download_path}}/nginx-{{ nginx_version }}'
+    target: install
+  become: true
+
+- name: Update Nginx Configuration
+  template:
+     src: nginx.conf.j2
+     dest: /etc/nginx/nginx.conf
+  become: true
+
+- import_tasks: debian-nginx-systemd.yml
+  when: ansible_os_family == 'Debian'
+  become: true
+
+- import_tasks: centos-nginx-systemd.yml
+  when: ansible_os_family == 'Redhat'
+  become: true
+

@@ -1,0 +1,23 @@
+---
+# dependencies for Redhat based Distros
+
+- name: Update yum and Install dependencies
+  yum:
+    name: "@Development Tools"
+    state: present
+    
+- name: Install Nginx Dependencies
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+     - perl
+     - perl-devel 
+     - perl-ExtUtils-Embed
+     - libxslt libxslt-devel
+     - libxml2
+     - libxml2-devel
+     - gd
+     - gd-devel
+     - GeoIP
+     - GeoIP-deve 

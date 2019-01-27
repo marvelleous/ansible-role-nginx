@@ -1,0 +1,12 @@
+---
+
+- name: Configure Systemd Service for Nginx
+  template:
+     src: centos-nginx-systemd.service.j2
+     dest: /usr/lib/systemd/system/nginx.service
+
+- name: restart service nginx on Centos, in all cases, also issue daemon-reload to pick up config changes
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: nginx

@@ -1,0 +1,11 @@
+---
+# tasks for dependencies
+
+- name: Update Apt and Install Dependencies for Debian based
+  apt:
+    update_cache: yes
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - build-essential
+  

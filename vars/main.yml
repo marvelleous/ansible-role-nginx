@@ -1,0 +1,14 @@
+---
+# vars file for nginx
+
+nginx_version: "1.15.7"
+pcre_version: "8.40"
+zlib_version: "1.2.11"
+openssl_version: "1.1.0f"
+nginx_conf_path: "/etc/nginx/nginx.conf"
+nginx_bin_path: "/usr/sbin/nginx"
+nginx_log_dir: "/var/log/nginx"
+nginx_user: www-data
+nginx_group: www-data
+download_path: "/tmp"
+server_name: "Godzilla"
